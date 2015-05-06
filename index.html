@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="cats" ng-controller="GameController" ng-keyup="move($event)"
+      ng-swipe-up="move($event, KEY_CODE.UP)" ng-swipe-down="move($event, KEY_CODE.DOWN)"
+      ng-swipe-left="move($event, KEY_CODE.LEFT)" ng-swipe-right="move($event, KEY_CODE.RIGHT)">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="public/favicons/cat.ico" sizes="16x16">
+
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Cats!</title>
+
+    <!-- Bootstrap -->
+    <link href="public/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="public/bower_components/animate.css/animate.min.css" rel="stylesheet">
+    <link href="public/css/custom.css" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="fight" ng-if="isOthersFight">
+    <h2>Whoop is happening!!!</h2>
+    <h4>Wait...</h4>
+</div>
+
+<div class="fight" ng-if="isMyFight">
+    <h1>Whoop!!!</h1>
+    <h4>Start hitting any key or swiping in any direction now!!!</h4>
+</div>
+
+<div class="fight-sounds">
+    <h3 ng-repeat="sound in sounds track by $index" ng-style="{'fontSize': (5 * ($index + 5)) + 'px'}"
+        class="animated {{ getSoundClass($index) }}" >
+        {{ sound }}
+    </h3>
+</div>
+
+<div class="alert alert-info" ng-if="initalising">
+    Initialising game...
+</div>
+
+<div ng-if="!initalising" class="header">
+    <h3><span class="pull-left">CAT WHOOP!</span><span class="pull-right">Hello {{ myCat.catInfo.name }}!</span></h3>
+    <div class="clearfix"></div>
+</div>
+
+<div class="row grid" ng-if="!initalising">
+    <div class="col-sm-2 pull-right score">
+        <h4>Playing:</h4>
+        <ul>
+            <li ng-repeat="cat in catsPlaying | orderBy : '-catInfo.score' : reverse">
+                <span ng-class="{'occupied': cat.catInfo.id !== myCat.catInfo.id, 'my-cat': cat.catInfo.id === myCat.catInfo.id}">
+                    {{ cat.catInfo.name }} <strong>{{ cat.catInfo.score }}</strong> <!-- (x: {{ cat.position.x }}, y: {{ cat.position.y }}) -->
+                </span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-sm-10 pull-left game">
+        <div ng-repeat="rowIndex in gridData.vertical track by $index">
+            <div class="grid-box col-sm-1 pull-left" ng-repeat="cellIndex in gridData.horizontal track by $index"
+                    ng-class="{'occupied': isAtPosition(cellIndex, rowIndex), 'my-cat': isMyCat(cellIndex, rowIndex)}">
+                <div ng-if="isAtPosition(cellIndex, rowIndex)">
+                    <img class="cat" src="public/img/cat.png" alt="cat"/>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+</div>
+
+<!-- Vendor JS -->
+<script src="public/bower_components/angular/angular.js"></script>
+<script src="public/bower_components/underscore/underscore-min.js"></script>
+<script src="public/mixed_components/socket-io/socket.io.client.min.js"></script>
+<script src="public/bower_components/angular-socket-io/socket.min.js"></script>
+<script src="public/bower_components/angular-swipe/dist/angular-swipe.min.js"></script>
+
+<!-- Custom JS -->
+<script src="public/js/ng-app/app.js"></script>
+
+</body>
+</html>

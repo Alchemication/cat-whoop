@@ -1,0 +1,86 @@
+
+.header {
+    padding: 10px 20px;
+    background-color: #EEE;
+}
+
+.header h3 {
+    margin: 0;
+}
+
+.fight-sounds h3 {
+    position: absolute;
+    z-index: 99;
+    color: red;
+}
+
+.fight {
+    position: absolute;
+    z-index: 9;
+    width: 100%;
+    height: 100%;
+    background-color: #f4ccc5;
+    text-align: center;
+    opacity: .9;
+}
+
+.fight h1 {
+    font-size: 340px;
+    text-shadow: #666 10px 10px;
+    color: red;
+}
+
+.fight h2 {
+    font-size: 120px;
+    text-shadow: #666 4px 4px;
+    color: indianred;
+}
+
+.fight h4 {
+    font-size: 35px;
+    color: steelblue;
+}
+
+.cat {
+    width: 40px;
+    height: 45px;
+    left: 30%;
+    top: 10%;
+    position: absolute;
+    -webkit-animation:spin 10s linear infinite;
+    -moz-animation:spin 10s linear infinite;
+    animation:spin 10s linear infinite;
+}
+@-moz-keyframes spin { 50% { -moz-transform: rotate(15deg); } }
+@-webkit-keyframes spin { 50% { -webkit-transform: rotate(15deg); } }
+@keyframes spin { 50% { -webkit-transform: rotate(15deg); transform:rotate(15deg); } }
+
+.grid {
+    border: 1px solid #e2e2e2;
+    margin: 10px;
+}
+
+.grid-box {
+    position: relative;
+    height: 60px;
+    border: 1px solid #F9F9F9;
+    background-color: #FFF;
+    /*background-image: url("../img/grass.jpeg");
+    background-repeat: repeat-x;*/
+}
+
+span.occupied {
+    color: #b6cee1;
+}
+
+div.occupied {
+    border: 2px solid #b6cee1;
+}
+
+span.my-cat {
+    color: #e788e7;
+}
+
+div.my-cat {
+    border: 2px solid #e788e7;
+}
