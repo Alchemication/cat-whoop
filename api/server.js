@@ -210,6 +210,10 @@ app.get('/', function(req, res) {
     res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
 });
 
+app.get('/api/get-names', function(req, res) {
+    res.jsonp({'rows': [1, 2, 3]});
+});
+
 // listen (start app with node server.js) ======================================
 http.listen(port, function() {
     console.log('listening on *:' + port);

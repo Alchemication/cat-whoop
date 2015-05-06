@@ -12,7 +12,7 @@ angular.module('cats', [
             ioSocket: io.connect(SOCKET_URL)
         });
 
-    }]).controller('GameController', ['$scope', 'mySocket', function ($scope, mySocket) {
+    }]).controller('GameController', ['$scope', 'mySocket', '$http', function ($scope, mySocket, $http) {
 
         // use dummy values initially
         var myCatIndex    = -1;
@@ -337,6 +337,10 @@ angular.module('cats', [
         $scope.catsPlaying = [];
         $scope.isMyFight   = false;
         $scope.sounds      = [];
+
+        $http.jsonp('http://localhost:3001/api/get-names?callback=JSON_CALLBACK', {params: {name: "adam"}}).then(function (r) {
+           console.log(r.data);
+        });
 
 }]).factory('socket', ["$rootScope", "io", function($rootScope, io) {
         var socket = io.connect(),
