@@ -8,7 +8,7 @@ angular.module('app', [
     constant('SOCKET_PROTOCOL', 'ws').
     constant('API_ADDRESS', '192.168.1.1').
     constant('API_PORT', '3001').
-    factory('mySocket', ['socketFactory', 'SOCKET_PROTOCOL', 'API_ADDRESS', 'API_PORT', function (socketFactory, 
+    factory('mySocket', ['socketFactory', 'SOCKET_PROTOCOL', 'API_ADDRESS', 'API_PORT', function (socketFactory,
         SOCKET_PROTOCOL, API_ADDRESS, API_PORT) {
 
         return socketFactory({
@@ -338,106 +338,7 @@ angular.module('app', [
         // init default data
         $scope.myPlayer       = {};
         $scope.playersPlaying = [];
-        $scope.isMyFight   = false;
-        $scope.sounds      = [];
-        $scope.playerType  = 'cat';
-
-        // sample ajax request (cross domain)
-        //$http.jsonp('http://localhost:3001/api/get-names?callback=JSON_CALLBACK', {params: {name: "adam"}}).then(function (r) {
-        //   console.log(r.data);
-        //});
-
-}]).factory('socket', ["$rootScope", "io", function($rootScope, io) {
-        var socket = io.connect(),
-            events = {},
-            that   = {};
-
-        var addCallback = function(name, callback) {
-            var event = events[name],
-                wrappedCallback = wrapCallback(callback);
-
-            if (!event) {
-                event = events[name] = [];
-            }
-
-            event.push({ callback: callback, wrapper: wrappedCallback });
-            return wrappedCallback;
-        };
-
-        var removeCallback = function(name, callback) {
-            var event = events[name],
-                wrappedCallback;
-
-            if (event) {
-                for(var i = event.length - 1; i >= 0; i--) {
-                    if (event[i].callback === callback) {
-                        wrappedCallback = event[i].wrapper;
-                        event.slice(i, 1);
-                        break;
-                    }
-                }
-            }
-            return wrappedCallback;
-        };
-
-        var removeAllCallbacks = function(name) {
-            delete events[name];
-        };
-
-        var wrapCallback = function(callback) {
-            var wrappedCallback = angular.noop;
-
-            if (callback) {
-                wrappedCallback = function() {
-                    var args = arguments;
-                    $rootScope.$apply(function() {
-                        callback.apply(socket, args);
-                    });
-                };
-            }
-            return wrappedCallback;
-        };
-
-        var listener = function(name, callback) {
-            return {
-                bindTo: function(scope) {
-                    if (scope != null) {
-                        scope.$on('$destroy', function() {
-                            that.removeListener(name, callback);
-                        });
-                    }
-                }
-            };
-        };
-
-        that = {
-            on: function(name, callback) {
-                socket.on(name, addCallback(name, callback));
-                return listener(name, callback);
-            },
-            once: function(name, callback) {
-                socket.once(name, addCallback(name, callback));
-                return listener(name, callback);
-            },
-            removeListener: function(name, callback) {
-                socket.removeListener(name, removeCallback(name, callback));
-            },
-            removeAllListeners: function(name) {
-                socket.removeAllListeners(name);
-                removeAllCallbacks(name);
-            },
-            emit: function(name, data, callback) {
-                if (callback) {
-                    socket.emit(name, data, wrapCallback(callback));
-                }
-                else {
-                    socket.emit(name, data);
-                }
-            }
-        };
-
-        return that;
-    }])
-    .factory('io', function() {
-        return io;
-    });
+        $scope.isMyFight      = false;
+        $scope.sounds         = [];
+        $scope.playerType     = 'cat';
+}]);
