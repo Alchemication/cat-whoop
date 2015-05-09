@@ -5,7 +5,7 @@ angular.module('players', [
         'btford.socket-io',
         'swipe'
     ]).
-    constant('SOCKET_URL', 'ws://localhost:3001').
+    constant('SOCKET_URL', 'ws://192.168.1.9:3001').
     factory('mySocket', ['socketFactory', 'SOCKET_URL', function (socketFactory, SOCKET_URL) {
 
         return socketFactory({
@@ -117,7 +117,7 @@ angular.module('players', [
                 newPosition = 0;
             }
 
-            $scope.myPlayer.position[axis]            = newPosition;
+            $scope.myPlayer.position[axis]                      = newPosition;
             $scope.playersPlaying[myPlayerIndex].position[axis] = newPosition;
 
             mySocket.emit('player moved', {"player": $scope.myPlayer});
