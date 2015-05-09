@@ -12,8 +12,9 @@ var http           = require('http').Server(app);
 var io             = require('socket.io')(http);
 var _              = require('underscore');
 var path           = require('path');
+var serverIp       = require('os').networkInterfaces().en0[1].address; // on mac anyways ;)
 
-app.use(express.static(__dirname + '/../public'));  // set the static files loc
+app.use(express.static(__dirname + '/../public'));  // serve static (public) content
 app.use(logger('dev')); 						    // log every request to the console
 
 // http://stackoverflow.com/questions/24330014/bodyparser-is-deprecated-express-4
@@ -24,7 +25,10 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(methodOverride());  // simulate DELETE and PUT
 
-var allPlayers = [
+var gridSize = {x: 10, y: 6}; // how many boxes will grid contain
+var fightEnd = 3; // how many seconds will fight last
+
+var allPlayersList = [
     {"id": 1, "name": "Charlie",img: "cat1.png", free: true, score: 0},
     {"id": 2, "name": "Bettie",img: "cat2.png", free: true, score: 0},
     {"id": 3, "name": "Fibi",img: "cat3.gif", free: true, score: 0},
@@ -69,8 +73,6 @@ var fightSounds = [
     "tote an ass whuppin'"
 ];
 
-var gridSize = {x: 10, y: 6};
-
 var gridVertical   = _.range(gridSize.y),
     gridHorizontal = _.range(gridSize.x);
 
@@ -90,7 +92,7 @@ var getFreePlayer = function () {
 
     var found = undefined;
 
-    allPlayers.forEach(function (player) {
+    allPlayersList.forEach(function (player) {
         if (!found && player.free === true) {
             player.free = false;
             found       = player;
@@ -104,9 +106,13 @@ var getFreePlayer = function () {
 var makeNewPlayer = function (socketId) {
     return {
         "socketId": socketId,
-        playerInfo: getFreePlayer(),
+        info: getFreePlayer(),
         position: {x: _.random(0, gridSize.x - 1), y: _.random(0, gridSize.y - 1)}
     };
+};
+
+var makeRandomSound = function () {
+    return fightSounds[_.random(0, fightSounds.length - 1)];
 };
 
 // sockets =====================================================================
@@ -147,8 +153,8 @@ io.on('connection', function (socket) {
         });
 
         // 3. update free'd up player in the list of all players
-        allPlayers.forEach(function (player) {
-            if (player.id === playerToDrop.playerInfo.id) {
+        allPlayersList.forEach(function (player) {
+            if (player.id === playerToDrop.info.id) {
                 player.free = true;
             }
         });
@@ -166,20 +172,21 @@ io.on('connection', function (socket) {
             if (_.isEqual(player.position, data.player.position)) {
                 io.emit('collision detected', {"players": [data.player, player]});
 
+                // emit fight end after timeout
                 setTimeout(function () {
 
                     // re-spawn players at random places,
-                    // @todo check to make sure 2 players don't spawn at same loplayerion!!
+                    // @todo check to make sure 2 players don't spawn at same location!!
                     playersPlaying.forEach(function (player) {
                         player.position = {x: _.random(0, gridSize.x - 1), y: _.random(0, gridSize.y - 1)};
                     });
 
                     io.emit('fight completed', {"players": playersPlaying});
-                }, 3000);
+                }, fightEnd * 1000);
             }
 
             // update position of player, which needs to be updated
-            if (player.playerInfo.id === data.player.playerInfo.id) {
+            if (player.socketId === data.player.socketId) {
                 player.position = data.player.position;
             }
         });
@@ -195,13 +202,13 @@ io.on('connection', function (socket) {
 
             // update position of player, which needs to be updated
             if (player.socketId === data.player.socketId) {
-                player.playerInfo.score += 1;
+                player.info.score += 1;
             }
         });
 
         // emit to all that score changed
-        data.player.playerInfo.score += 1;
-        data.sound = data.player.playerInfo.name + ': Meow ~~ ' + fightSounds[_.random(0, fightSounds.length - 1)] + '!';
+        data.player.info.score += 1;
+        data.sound = data.player.info.name + ': Meow ~~ ' + makeRandomSound() + '!';
         io.emit('score up', data);
     });
 });
@@ -216,11 +223,7 @@ io.on('connection', function (socket) {
 //});
 
 app.get('/', function(req, res) {
-    res.sendFile(path.resolve(__dirname + "/../public/index.html")); // load the single view file (angular will handle the page changes on the front-end)
-});
-
-app.get('/api/get-names', function(req, res) {
-    res.jsonp({'rows': [1, 2, 3]});
+    res.sendFile(path.resolve(__dirname + "/../public/index.html")); // load view
 });
 
 // listen (start app with node server.js) ======================================

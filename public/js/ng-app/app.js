@@ -1,18 +1,21 @@
 /**
  * Created by apple on 03/05/15.
  */
-angular.module('players', [
+angular.module('app', [
         'btford.socket-io',
         'swipe'
     ]).
-    constant('SOCKET_URL', 'ws://192.168.1.9:3001').
-    factory('mySocket', ['socketFactory', 'SOCKET_URL', function (socketFactory, SOCKET_URL) {
+    constant('SOCKET_PROTOCOL', 'ws').
+    constant('API_ADDRESS', '192.168.1.1').
+    constant('API_PORT', '3001').
+    factory('mySocket', ['socketFactory', 'SOCKET_PROTOCOL', 'API_ADDRESS', 'API_PORT', function (socketFactory, 
+        SOCKET_PROTOCOL, API_ADDRESS, API_PORT) {
 
         return socketFactory({
-            ioSocket: io.connect(SOCKET_URL)
+            ioSocket: io.connect(SOCKET_PROTOCOL + '://' + API_ADDRESS + ':' + API_PORT)
         });
 
-    }]).controller('GameController', ['$scope', 'mySocket', '$http', function ($scope, mySocket, $http) {
+    }]).controller('AppController', ['$scope', 'mySocket', function ($scope, mySocket) {
 
         // use dummy values initially
         var myPlayerIndex = -1;
@@ -145,17 +148,17 @@ angular.module('players', [
         var updateScore = function (data) {
 
             var socketToUpdate = data.player.socketId,
-                newScore       = data.player.playerInfo.score;
+                newScore       = data.player.info.score;
 
             //check if our player needs to be updated
             if (socketToUpdate === $scope.myPlayer.socketId) {
-                $scope.myPlayer.playerInfo.score = newScore;
+                $scope.myPlayer.info.score = newScore;
             }
 
             // update all players
             $scope.playersPlaying.forEach(function (player) {
                 if (player.socketId === socketToUpdate) {
-                    player.playerInfo.score = newScore;
+                    player.info.score = newScore;
                 }
             });
         };
@@ -203,13 +206,13 @@ angular.module('players', [
         mySocket.on('player moved', function (data) {
 
             // skip any updates if it was our move
-            if (data.player.playerInfo.id === $scope.myPlayer.playerInfo.id) {
+            if (data.player.info.id === $scope.myPlayer.info.id) {
                 return;
             }
 
             // update position of player, which moved
             $scope.playersPlaying.forEach(function (player) {
-                if (player.playerInfo.id === data.player.playerInfo.id) {
+                if (player.info.id === data.player.info.id) {
                     player.position = data.player.position;
                 }
             });

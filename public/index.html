@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="players" ng-controller="GameController" ng-keyup="move($event)"
+<html lang="en" ng-app="app" ng-controller="AppController" ng-keyup="move($event)"
       ng-swipe-up="move($event, KEY_CODE.UP)" ng-swipe-down="move($event, KEY_CODE.DOWN)"
       ng-swipe-left="move($event, KEY_CODE.LEFT)" ng-swipe-right="move($event, KEY_CODE.RIGHT)">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="public/favicons/{{ playerType }}.ico" sizes="16x16">
+    <link rel="icon" type="image/png" ng-href="favicons/{{ playerType }}.ico" sizes="16x16">
 
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>{{ playerType | uppercase }} Whoop!</title>
@@ -40,7 +40,7 @@
 </div>
 
 <div ng-if="!initalising" class="header">
-    <h3><span class="pull-left">{{ playerType | uppercase }} WHOOP!</span><span class="pull-right">Hello {{ myPlayer.playerInfo.name }}!</span></h3>
+    <h3><span class="pull-left">{{ playerType | uppercase }} WHOOP!</span><span class="pull-right">Hello {{ myPlayer.info.name }}!</span></h3>
     <div class="clearfix"></div>
 </div>
 
@@ -48,9 +48,9 @@
     <div class="col-sm-2 pull-right score">
         <h4>Playing:</h4>
         <ul>
-            <li ng-repeat="player in playersPlaying | orderBy : '-playerInfo.score' : reverse">
-                <span ng-class="{'occupied': player.playerInfo.id !== myPlayer.playerInfo.id, 'my-player': player.playerInfo.id === myPlayer.playerInfo.id}">
-                    {{ player.playerInfo.name }} <strong>{{ player.playerInfo.score }}</strong> <!-- (x: {{ player.position.x }}, y: {{ player.position.y }}) -->
+            <li ng-repeat="player in playersPlaying | orderBy : '-info.score' : reverse">
+                <span ng-class="{'occupied': player.info.id !== myPlayer.info.id, 'my-player': player.info.id === myPlayer.info.id}">
+                    {{ player.info.name }} <strong>{{ player.info.score }}</strong> <!-- (x: {{ player.position.x }}, y: {{ player.position.y }}) -->
                 </span>
             </li>
         </ul>
