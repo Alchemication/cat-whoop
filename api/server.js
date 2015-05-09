@@ -92,7 +92,7 @@ var getFreePlayer = function () {
     allPlayers.forEach(function (player) {
         if (!found && player.free === true) {
             player.free = false;
-            found    = player;
+            found       = player;
             return found;
         }
     });

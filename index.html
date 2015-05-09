@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="public/favicons/player.ico" sizes="16x16">
+    <link rel="icon" type="image/png" href="public/favicons/{{ playerType }}.ico" sizes="16x16">
 
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Players!</title>
+    <title>{{ playerType | uppercase }} Whoop!</title>
 
     <!-- Bootstrap -->
     <link href="public/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -62,7 +62,7 @@
             <div class="grid-box col-sm-1 pull-left" ng-repeat="cellIndex in gridData.horizontal track by $index"
                     ng-class="{'occupied': isAtPosition(cellIndex, rowIndex), 'my-player': isMyPlayer(cellIndex, rowIndex)}">
                 <div ng-if="isAtPosition(cellIndex, rowIndex)">
-                    <img class="player" src="public/img/{{ playerType }}.png" alt="player"/>
+                    <img class="player" ng-src="public/img/{{ playerType }}.png" alt="{{ playerType }}"/>
                 </div>
             </div>
             <div class="clearfix"></div>
