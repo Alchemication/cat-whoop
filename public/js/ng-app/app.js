@@ -339,9 +339,10 @@ angular.module('players', [
         $scope.sounds      = [];
         $scope.playerType  = 'cat';
 
-        $http.jsonp('http://localhost:3001/api/get-names?callback=JSON_CALLBACK', {params: {name: "adam"}}).then(function (r) {
-           console.log(r.data);
-        });
+        // sample ajax request (cross domain)
+        //$http.jsonp('http://localhost:3001/api/get-names?callback=JSON_CALLBACK', {params: {name: "adam"}}).then(function (r) {
+        //   console.log(r.data);
+        //});
 
 }]).factory('socket', ["$rootScope", "io", function($rootScope, io) {
         var socket = io.connect(),

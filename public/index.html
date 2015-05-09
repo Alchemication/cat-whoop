@@ -12,10 +12,9 @@
     <title>{{ playerType | uppercase }} Whoop!</title>
 
     <!-- Bootstrap -->
-    <link href="public/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="public/bower_components/animate.css/animate.min.css" rel="stylesheet">
-    <link href="public/css/custom.css" rel="stylesheet">
-
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bower_components/animate.css/animate.min.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
 </head>
 <body>
 
@@ -62,7 +61,7 @@
             <div class="grid-box col-sm-1 pull-left" ng-repeat="cellIndex in gridData.horizontal track by $index"
                     ng-class="{'occupied': isAtPosition(cellIndex, rowIndex), 'my-player': isMyPlayer(cellIndex, rowIndex)}">
                 <div ng-if="isAtPosition(cellIndex, rowIndex)">
-                    <img class="player" ng-src="public/img/{{ playerType }}.png" alt="{{ playerType }}"/>
+                    <img class="player" ng-src="img/{{ playerType }}.png" alt="{{ playerType }}"/>
                 </div>
             </div>
             <div class="clearfix"></div>
@@ -73,14 +72,14 @@
 </div>
 
 <!-- Vendor JS -->
-<script src="public/bower_components/angular/angular.js"></script>
-<script src="public/bower_components/underscore/underscore-min.js"></script>
-<script src="public/mixed_components/socket-io/socket.io.client.min.js"></script>
-<script src="public/bower_components/angular-socket-io/socket.min.js"></script>
-<script src="public/bower_components/angular-swipe/dist/angular-swipe.min.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/underscore/underscore-min.js"></script>
+<script src="mixed_components/socket-io/socket.io.client.min.js"></script>
+<script src="bower_components/angular-socket-io/socket.min.js"></script>
+<script src="bower_components/angular-swipe/dist/angular-swipe.min.js"></script>
 
 <!-- Custom JS -->
-<script src="public/js/ng-app/app.js"></script>
+<script src="js/ng-app/app.js"></script>
 
 </body>
 </html>

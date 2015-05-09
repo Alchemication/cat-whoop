@@ -11,29 +11,30 @@ var app            = require('express')();
 var http           = require('http').Server(app);
 var io             = require('socket.io')(http);
 var _              = require('underscore');
+var path           = require('path');
 
-app.use(express.static(__dirname + '/public'));  // set the static files loplayerion /public/img will be /img for users
-app.use(logger('dev')); 						 // log every request to the console
+app.use(express.static(__dirname + '/../public'));  // set the static files loc
+app.use(logger('dev')); 						    // log every request to the console
 
-// http://stackoverflow.com/questions/24330014/bodyparser-is-depreplayered-express-4
+// http://stackoverflow.com/questions/24330014/bodyparser-is-deprecated-express-4
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-//app.use(bodyParser.json());
-//app.use(methodOverride());  // simulate DELETE and PUT
+app.use(bodyParser.json());
+app.use(methodOverride());  // simulate DELETE and PUT
 
 var allPlayers = [
-    {"id": 1, "name": "Charlie",color: "gray", free: true, score: 0},
-    {"id": 2, "name": "Bettie",color: "yellow", free: true, score: 0},
-    {"id": 3, "name": "Fibi",color: "black", free: true, score: 0},
-    {"id": 4, "name": "Kittie",color: "pink", free: true, score: 0},
-    {"id": 5, "name": "Baltazar",color: "green", free: true, score: 0},
-    {"id": 6, "name": "Bob",color: "orange", free: true, score: 0},
-    {"id": 7, "name": "Splinter", color: "red", free: true, score: 0},
-    {"id": 8, "name": "Krang", color: "beige", free: true, score: 0},
-    {"id": 9, "name": "Samantha", color: "indianred", free: true, score: 0},
-    {"id": 10, "name": "Dora", color: "steelblue", free: true, score: 0}
+    {"id": 1, "name": "Charlie",img: "cat1.png", free: true, score: 0},
+    {"id": 2, "name": "Bettie",img: "cat2.png", free: true, score: 0},
+    {"id": 3, "name": "Fibi",img: "cat3.gif", free: true, score: 0},
+    {"id": 4, "name": "Kittie",img: "cat4.png", free: true, score: 0},
+    {"id": 5, "name": "Baltazar",img: "cat5.png", free: true, score: 0},
+    {"id": 6, "name": "Bob",img: "cat6.png", free: true, score: 0},
+    {"id": 7, "name": "Splinter", img: "cat1.png", free: true, score: 0},
+    {"id": 8, "name": "Krang", img: "cat2.png", free: true, score: 0},
+    {"id": 9, "name": "Samantha", img: "cat3.png", free: true, score: 0},
+    {"id": 10, "name": "Dora", img: "cat4.png", free: true, score: 0}
 ];
 
 var fightSounds = [
@@ -206,8 +207,16 @@ io.on('connection', function (socket) {
 });
 
 // routes ======================================================================
+
+//app.all('*', function(req, res, next) {
+//    res.header('Access-Control-Allow-Origin', '*');
+//    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+//    res.header('Access-Control-Allow-Headers', 'Content-Type');
+//    next();
+//});
+
 app.get('/', function(req, res) {
-    res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+    res.sendFile(path.resolve(__dirname + "/../public/index.html")); // load the single view file (angular will handle the page changes on the front-end)
 });
 
 app.get('/api/get-names', function(req, res) {
