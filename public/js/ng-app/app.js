@@ -1,7 +1,7 @@
 /**
  * Created by apple on 03/05/15.
  */
-angular.module('cats', [
+angular.module('players', [
         'btford.socket-io',
         'swipe'
     ]).
@@ -15,7 +15,7 @@ angular.module('cats', [
     }]).controller('GameController', ['$scope', 'mySocket', '$http', function ($scope, mySocket, $http) {
 
         // use dummy values initially
-        var myCatIndex    = -1;
+        var myPlayerIndex = -1;
 
         var animations = [
             'zoomOut',
@@ -76,7 +76,7 @@ angular.module('cats', [
         };
 
         /**
-         * Check if we have any cat at these coordinates
+         * Check if we have any player at these coordinates
          *
          * @param {int} x
          * @param {int} y
@@ -86,8 +86,8 @@ angular.module('cats', [
 
             var found = false;
 
-            $scope.catsPlaying.forEach(function (cat) {
-                if (cat.position.x === x && cat.position.y === y) {
+            $scope.playersPlaying.forEach(function (player) {
+                if (player.position.x === x && player.position.y === y) {
                     found = true;
                 }
             });
@@ -105,7 +105,7 @@ angular.module('cats', [
          */
         var updatePosition = function (axis, value) {
 
-            var currentPosition = $scope.catsPlaying[myCatIndex].position;
+            var currentPosition = $scope.playersPlaying[myPlayerIndex].position;
             var newPosition     = currentPosition[axis] += value;
             var maxAxisValue    = $scope.gridData.size[axis] - 1;
 
@@ -117,21 +117,21 @@ angular.module('cats', [
                 newPosition = 0;
             }
 
-            $scope.myCat.position[axis]            = newPosition;
-            $scope.catsPlaying[myCatIndex].position[axis] = newPosition;
+            $scope.myPlayer.position[axis]            = newPosition;
+            $scope.playersPlaying[myPlayerIndex].position[axis] = newPosition;
 
-            mySocket.emit('player moved', {"cat": $scope.myCat});
+            mySocket.emit('player moved', {"player": $scope.myPlayer});
         };
 
         /**
-         * Update index of our cats by scanning through
-         * all the cats
+         * Update index of our players by scanning through
+         * all the players
          */
-        var updateMyCatIndex = function () {
+        var updateMyPlayerIndex = function () {
             var index = 0;
-            $scope.catsPlaying.forEach(function (cat) {
-                if (cat.socketId === $scope.myCat.socketId) {
-                    myCatIndex = index;
+            $scope.playersPlaying.forEach(function (player) {
+                if (player.socketId === $scope.myPlayer.socketId) {
+                    myPlayerIndex = index;
                 }
                 index++;
             });
@@ -144,24 +144,24 @@ angular.module('cats', [
          */
         var updateScore = function (data) {
 
-            var socketToUpdate = data.cat.socketId,
-                newScore       = data.cat.catInfo.score;
+            var socketToUpdate = data.player.socketId,
+                newScore       = data.player.playerInfo.score;
 
-            //check if our cat needs to be updated
-            if (socketToUpdate === $scope.myCat.socketId) {
-                $scope.myCat.catInfo.score = newScore;
+            //check if our player needs to be updated
+            if (socketToUpdate === $scope.myPlayer.socketId) {
+                $scope.myPlayer.playerInfo.score = newScore;
             }
 
-            // update all cats
-            $scope.catsPlaying.forEach(function (cat) {
-                if (cat.socketId === socketToUpdate) {
-                    cat.catInfo.score = newScore;
+            // update all players
+            $scope.playersPlaying.forEach(function (player) {
+                if (player.socketId === socketToUpdate) {
+                    player.playerInfo.score = newScore;
                 }
             });
         };
 
         /**
-         * While cats are fighting, add this to indicate the hits
+         * While players are fighting, add this to indiplayere the hits
          * @param {string} sound
          */
         var makeSound = function (sound) {
@@ -169,13 +169,13 @@ angular.module('cats', [
         };
 
         /**
-         * Find our cat in the array of cats and update it's position
-         * @param {object} cats
+         * Find our player in the array of players and update it's position
+         * @param {object} players
          */
-        var findAndUpdateMyCat = function (cats) {
-            cats.forEach(function (cat) {
-                if (cat.socketId === $scope.myCat.socketId) {
-                    $scope.myCat = cat;
+        var findAndUpdateMyPlayer = function (players) {
+            players.forEach(function (player) {
+                if (player.socketId === $scope.myPlayer.socketId) {
+                    $scope.myPlayer = player;
                 }
             });
         };
@@ -184,7 +184,7 @@ angular.module('cats', [
          * Run when we joined the game
          */
         mySocket.on('joined game', function (data) {
-            $scope.myCat    = data.newCat;
+            $scope.myPlayer    = data.newPlayer;
             $scope.gridData = data.gridData;
         });
 
@@ -192,8 +192,8 @@ angular.module('cats', [
          * Run when any player joined/dropped
          */
         mySocket.on('players changed', function (data) {
-            $scope.catsPlaying = data.cats;
-            updateMyCatIndex();
+            $scope.playersPlaying = data.players;
+            updateMyPlayerIndex();
             $scope.initalising = false;
         });
 
@@ -203,39 +203,39 @@ angular.module('cats', [
         mySocket.on('player moved', function (data) {
 
             // skip any updates if it was our move
-            if (data.cat.catInfo.id === $scope.myCat.catInfo.id) {
+            if (data.player.playerInfo.id === $scope.myPlayer.playerInfo.id) {
                 return;
             }
 
             // update position of player, which moved
-            $scope.catsPlaying.forEach(function (cat) {
-                if (cat.catInfo.id === data.cat.catInfo.id) {
-                    cat.position = data.cat.position;
+            $scope.playersPlaying.forEach(function (player) {
+                if (player.playerInfo.id === data.player.playerInfo.id) {
+                    player.position = data.player.position;
                 }
             });
         });
 
         /**
-         * Run when 2 cats collided with each other,
+         * Run when 2 players collided with each other,
          * then fight starts
          */
         mySocket.on('collision detected', function (data) {
 
-            var isMyCatFighting = false;
+            var isMyPlayerFighting = false;
 
             // check if it's our fight and set flag accordingly
-            data.cats.forEach(function (cat) {
-                 if (cat.socketId === $scope.myCat.socketId) {
-                     isMyCatFighting = true;
+            data.players.forEach(function (player) {
+                 if (player.socketId === $scope.myPlayer.socketId) {
+                     isMyPlayerFighting = true;
                  }
             });
 
-            $scope.isMyFight       = isMyCatFighting === true;
-            $scope.isOthersFight   = isMyCatFighting === false;
+            $scope.isMyFight       = isMyPlayerFighting === true;
+            $scope.isOthersFight   = isMyPlayerFighting === false;
         });
 
         /**
-         * Run when cat is scratching
+         * Run when player is scratching
          */
         mySocket.on('score up', function (data) {
             makeSound(data.sound);
@@ -247,11 +247,11 @@ angular.module('cats', [
          */
         mySocket.on('fight completed', function (data) {
 
-            // update all cats
-            $scope.catsPlaying = data.cats;
+            // update all players
+            $scope.playersPlaying = data.players;
 
-            // update our cat
-            findAndUpdateMyCat(data.cats);
+            // update our player
+            findAndUpdateMyPlayer(data.players);
 
             $scope.isMyFight     = false;
             $scope.isOthersFight = false;
@@ -259,18 +259,18 @@ angular.module('cats', [
         });
 
         /**
-         * Check if our cat sits at these coordinates
+         * Check if our player sits at these coordinates
          *
          * @param {int} rowIndex
          * @param {int} cellIndex
          * @returns {boolean}
          */
-        $scope.isMyCat = function (rowIndex, cellIndex) {
-            return isAtPosition(rowIndex, cellIndex) && rowIndex === $scope.myCat.position.x && cellIndex === $scope.myCat.position.y;
+        $scope.isMyPlayer = function (rowIndex, cellIndex) {
+            return isAtPosition(rowIndex, cellIndex) && rowIndex === $scope.myPlayer.position.x && cellIndex === $scope.myPlayer.position.y;
         };
 
         /**
-         * Check if any cat sits at these coordinates
+         * Check if any player sits at these coordinates
          *
          * @param {int} rowIndex
          * @param {int} cellIndex
@@ -282,7 +282,7 @@ angular.module('cats', [
 
         /**
          * Add behaviour when key up is fired,
-         * update cat's position
+         * update player's position
          *
          * @param {object} keyEvent
          * @param {int} keyCode Optional, if not provided, it will be extracted from $event
@@ -298,7 +298,7 @@ angular.module('cats', [
             }
 
             if ($scope.isMyFight) {
-                mySocket.emit('score up', {"cat": $scope.myCat});
+                mySocket.emit('score up', {"player": $scope.myPlayer});
                 return;
             }
 
@@ -333,10 +333,11 @@ angular.module('cats', [
         $scope.initalising = true;
 
         // init default data
-        $scope.myCat       = {};
-        $scope.catsPlaying = [];
+        $scope.myPlayer       = {};
+        $scope.playersPlaying = [];
         $scope.isMyFight   = false;
         $scope.sounds      = [];
+        $scope.playerType  = 'cat';
 
         $http.jsonp('http://localhost:3001/api/get-names?callback=JSON_CALLBACK', {params: {name: "adam"}}).then(function (r) {
            console.log(r.data);

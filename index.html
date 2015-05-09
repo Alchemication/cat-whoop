@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="cats" ng-controller="GameController" ng-keyup="move($event)"
+<html lang="en" ng-app="players" ng-controller="GameController" ng-keyup="move($event)"
       ng-swipe-up="move($event, KEY_CODE.UP)" ng-swipe-down="move($event, KEY_CODE.DOWN)"
       ng-swipe-left="move($event, KEY_CODE.LEFT)" ng-swipe-right="move($event, KEY_CODE.RIGHT)">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="public/favicons/cat.ico" sizes="16x16">
+    <link rel="icon" type="image/png" href="public/favicons/player.ico" sizes="16x16">
 
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Cats!</title>
+    <title>Players!</title>
 
     <!-- Bootstrap -->
     <link href="public/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -41,7 +41,7 @@
 </div>
 
 <div ng-if="!initalising" class="header">
-    <h3><span class="pull-left">CAT WHOOP!</span><span class="pull-right">Hello {{ myCat.catInfo.name }}!</span></h3>
+    <h3><span class="pull-left">{{ playerType | uppercase }} WHOOP!</span><span class="pull-right">Hello {{ myPlayer.playerInfo.name }}!</span></h3>
     <div class="clearfix"></div>
 </div>
 
@@ -49,9 +49,9 @@
     <div class="col-sm-2 pull-right score">
         <h4>Playing:</h4>
         <ul>
-            <li ng-repeat="cat in catsPlaying | orderBy : '-catInfo.score' : reverse">
-                <span ng-class="{'occupied': cat.catInfo.id !== myCat.catInfo.id, 'my-cat': cat.catInfo.id === myCat.catInfo.id}">
-                    {{ cat.catInfo.name }} <strong>{{ cat.catInfo.score }}</strong> <!-- (x: {{ cat.position.x }}, y: {{ cat.position.y }}) -->
+            <li ng-repeat="player in playersPlaying | orderBy : '-playerInfo.score' : reverse">
+                <span ng-class="{'occupied': player.playerInfo.id !== myPlayer.playerInfo.id, 'my-player': player.playerInfo.id === myPlayer.playerInfo.id}">
+                    {{ player.playerInfo.name }} <strong>{{ player.playerInfo.score }}</strong> <!-- (x: {{ player.position.x }}, y: {{ player.position.y }}) -->
                 </span>
             </li>
         </ul>
@@ -60,9 +60,9 @@
     <div class="col-sm-10 pull-left game">
         <div ng-repeat="rowIndex in gridData.vertical track by $index">
             <div class="grid-box col-sm-1 pull-left" ng-repeat="cellIndex in gridData.horizontal track by $index"
-                    ng-class="{'occupied': isAtPosition(cellIndex, rowIndex), 'my-cat': isMyCat(cellIndex, rowIndex)}">
+                    ng-class="{'occupied': isAtPosition(cellIndex, rowIndex), 'my-player': isMyPlayer(cellIndex, rowIndex)}">
                 <div ng-if="isAtPosition(cellIndex, rowIndex)">
-                    <img class="cat" src="public/img/cat.png" alt="cat"/>
+                    <img class="player" src="public/img/{{ playerType }}.png" alt="player"/>
                 </div>
             </div>
             <div class="clearfix"></div>

@@ -12,10 +12,10 @@ var http           = require('http').Server(app);
 var io             = require('socket.io')(http);
 var _              = require('underscore');
 
-app.use(express.static(__dirname + '/public'));  // set the static files location /public/img will be /img for users
+app.use(express.static(__dirname + '/public'));  // set the static files loplayerion /public/img will be /img for users
 app.use(logger('dev')); 						 // log every request to the console
 
-// http://stackoverflow.com/questions/24330014/bodyparser-is-deprecated-express-4
+// http://stackoverflow.com/questions/24330014/bodyparser-is-depreplayered-express-4
 app.use(bodyParser.urlencoded({
     extended: true
 }));
@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({
 //app.use(bodyParser.json());
 //app.use(methodOverride());  // simulate DELETE and PUT
 
-var allCats = [
+var allPlayers = [
     {"id": 1, "name": "Charlie",color: "gray", free: true, score: 0},
     {"id": 2, "name": "Bettie",color: "yellow", free: true, score: 0},
     {"id": 3, "name": "Fibi",color: "black", free: true, score: 0},
@@ -44,7 +44,7 @@ var fightSounds = [
     "beat the hell out",
     "bust on",
     "bust up",
-    "catch the fair one",
+    "playerch the fair one",
     "chuck 'em ",
     "drop gloves",
     "dustup",
@@ -79,20 +79,20 @@ var gridData = {
     'horizontal': gridHorizontal
 };
 
-var catsPlaying = [];
+var playersPlaying = [];
 
 /**
- * Get free cat and change it's status to free:false
+ * Get free player and change it's status to free:false
  * @returns {undefined}
  */
-var getFreeCat = function () {
+var getFreePlayer = function () {
 
     var found = undefined;
 
-    allCats.forEach(function (cat) {
-        if (!found && cat.free === true) {
-            cat.free = false;
-            found    = cat;
+    allPlayers.forEach(function (player) {
+        if (!found && player.free === true) {
+            player.free = false;
+            found    = player;
             return found;
         }
     });
@@ -100,10 +100,10 @@ var getFreeCat = function () {
     return found;
 };
 
-var makeNewCat = function (socketId) {
+var makeNewPlayer = function (socketId) {
     return {
         "socketId": socketId,
-        catInfo: getFreeCat(),
+        playerInfo: getFreePlayer(),
         position: {x: _.random(0, gridSize.x - 1), y: _.random(0, gridSize.y - 1)}
     };
 };
@@ -111,75 +111,75 @@ var makeNewCat = function (socketId) {
 // sockets =====================================================================
 
 var emitNewPlayerList = function () {
-    io.emit('players changed', {"cats": catsPlaying});
+    io.emit('players changed', {"players": playersPlaying});
 };
 
 io.on('connection', function (socket) {
 
     var socketId = socket.conn.id;
 
-    console.log('User connected: ' + socketId);
+    console.log('Player connected: ' + socketId);
 
-    // 1. create new cat if any left
-    var newCat = makeNewCat(socketId);
-    catsPlaying.push(newCat);
+    // 1. create new player if any left
+    var newPlayer = makeNewPlayer(socketId);
+    playersPlaying.push(newPlayer);
 
     // 2. send out an update to socket with socket id
     socket.emit('joined game', {
-        "newCat": newCat,
+        "newPlayer": newPlayer,
         "gridData": gridData
     });
 
-    // 3. send out an update to everyone with new list of cats
+    // 3. send out an update to everyone with new list of players
     emitNewPlayerList();
 
     socket.on('disconnect', function () {
 
-        // 1. get cat to drop (we will need it's index)
-        var catToDrop = _.findWhere(catsPlaying, {"socketId": socketId});
+        // 1. get player to drop (we will need it's index)
+        var playerToDrop = _.findWhere(playersPlaying, {"socketId": socketId});
 
-        console.log('User disconnected: ' + socketId);
+        console.log('Player disconnected: ' + socketId);
 
-        // 2. get rid of the cat with that id from the list of playing cats
-        catsPlaying = _.filter(catsPlaying, function (cat) {
-            return cat.socketId !== socketId;
+        // 2. get rid of the player with that id from the list of playing players
+        playersPlaying = _.filter(playersPlaying, function (player) {
+            return player.socketId !== socketId;
         });
 
-        // 3. update free'd up cat in the list of all cats
-        allCats.forEach(function (cat) {
-            if (cat.id === catToDrop.catInfo.id) {
-                cat.free = true;
+        // 3. update free'd up player in the list of all players
+        allPlayers.forEach(function (player) {
+            if (player.id === playerToDrop.playerInfo.id) {
+                player.free = true;
             }
         });
 
-        // 4. notify all that player with new list of cats
+        // 4. notify all that player with new list of players
         emitNewPlayerList();
     });
 
     socket.on('player moved', function (data) {
 
-        // update current catsPlaying, also look for collision
-        catsPlaying.forEach(function (cat) {
+        // update current playersPlaying, also look for collision
+        playersPlaying.forEach(function (player) {
 
             // check for collision and emit it asap!
-            if (_.isEqual(cat.position, data.cat.position)) {
-                io.emit('collision detected', {"cats": [data.cat, cat]});
+            if (_.isEqual(player.position, data.player.position)) {
+                io.emit('collision detected', {"players": [data.player, player]});
 
                 setTimeout(function () {
 
-                    // re-spawn cats at random places,
-                    // @todo check to make sure 2 cats don't spawn at same location!!
-                    catsPlaying.forEach(function (cat) {
-                        cat.position = {x: _.random(0, gridSize.x - 1), y: _.random(0, gridSize.y - 1)};
+                    // re-spawn players at random places,
+                    // @todo check to make sure 2 players don't spawn at same loplayerion!!
+                    playersPlaying.forEach(function (player) {
+                        player.position = {x: _.random(0, gridSize.x - 1), y: _.random(0, gridSize.y - 1)};
                     });
 
-                    io.emit('fight completed', {"cats": catsPlaying});
+                    io.emit('fight completed', {"players": playersPlaying});
                 }, 3000);
             }
 
-            // update position of cat, which needs to be updated
-            if (cat.catInfo.id === data.cat.catInfo.id) {
-                cat.position = data.cat.position;
+            // update position of player, which needs to be updated
+            if (player.playerInfo.id === data.player.playerInfo.id) {
+                player.position = data.player.position;
             }
         });
 
@@ -189,18 +189,18 @@ io.on('connection', function (socket) {
 
     socket.on('score up', function (data) {
 
-        // update current catsPlaying
-        catsPlaying.forEach(function (cat) {
+        // update current playersPlaying
+        playersPlaying.forEach(function (player) {
 
-            // update position of cat, which needs to be updated
-            if (cat.socketId === data.cat.socketId) {
-                cat.catInfo.score += 1;
+            // update position of player, which needs to be updated
+            if (player.socketId === data.player.socketId) {
+                player.playerInfo.score += 1;
             }
         });
 
         // emit to all that score changed
-        data.cat.catInfo.score += 1;
-        data.sound = data.cat.catInfo.name + ': Meow ~~ ' + fightSounds[_.random(0, fightSounds.length - 1)] + '!';
+        data.player.playerInfo.score += 1;
+        data.sound = data.player.playerInfo.name + ': Meow ~~ ' + fightSounds[_.random(0, fightSounds.length - 1)] + '!';
         io.emit('score up', data);
     });
 });

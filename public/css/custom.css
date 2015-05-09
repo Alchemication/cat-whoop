@@ -35,7 +35,7 @@
     color: steelblue;
 }
 
-.cat {
+.player {
     width: 40px;
     height: 45px;
     left: 30%;
@@ -82,10 +82,10 @@ div.occupied {
     border: 2px solid #b6cee1;
 }
 
-span.my-cat {
+span.my-player {
     color: #e788e7;
 }
 
-div.my-cat {
+div.my-player {
     border: 2px solid #e788e7;
 }
