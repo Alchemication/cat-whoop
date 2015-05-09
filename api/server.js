@@ -3,7 +3,6 @@
 // set up ======================================================================
 var express        = require('express');
 var port  	       = process.env.PORT || 3001; 				// set the port
-var database       = require('./config/database'); 			// load the database config
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
 var logger         = require('morgan');
