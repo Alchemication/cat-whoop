@@ -11,27 +11,21 @@
 .fight-sounds h3 {
     position: absolute;
     z-index: 99;
-    color: red;
+    color: indianred;
 }
 
 .fight {
-    position: absolute;
+    position: fixed;
     z-index: 9;
     width: 100%;
-    height: 100%;
     background-color: #f4ccc5;
     text-align: center;
-    opacity: .9;
-}
-
-.fight h1 {
-    font-size: 340px;
-    text-shadow: #666 10px 10px;
-    color: red;
+    opacity: .8;
+    border-bottom: 1px solid #eab9b1;
 }
 
 .fight h2 {
-    font-size: 120px;
+    font-size: 80px;
     text-shadow: #666 4px 4px;
     color: indianred;
 }
@@ -51,9 +45,20 @@
     -moz-animation:spin 10s linear infinite;
     animation:spin 10s linear infinite;
 }
+
+.grid-fight {
+    -webkit-animation:spinAround 1s linear infinite;
+    -moz-animation:spinAround 1s linear infinite;
+    animation:spinAround 1s linear infinite;
+}
+
 @-moz-keyframes spin { 50% { -moz-transform: rotate(15deg); } }
 @-webkit-keyframes spin { 50% { -webkit-transform: rotate(15deg); } }
 @keyframes spin { 50% { -webkit-transform: rotate(15deg); transform:rotate(15deg); } }
+
+@-moz-keyframes spinAround { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spinAround { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spinAround { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
 .grid {
     border: 1px solid #e2e2e2;

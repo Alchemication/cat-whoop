@@ -20,12 +20,12 @@
 <body>
 
 <div class="fight" ng-if="isOthersFight">
-    <h2>Whoop is happening!!!</h2>
+    <h2 class="animated" ng-class="{'flash': isOthersFight}">Whoop is happening!!!</h2>
     <h4>Wait...</h4>
 </div>
 
 <div class="fight" ng-if="isMyFight">
-    <h1>Whoop!!!</h1>
+    <h2 class="animated" ng-class="{'flash': isMyFight}">Whoop!!!</h2>
     <h4>Start hitting any key or swiping in any direction now!!!</h4>
 </div>
 
@@ -45,7 +45,7 @@
     <div class="clearfix"></div>
 </div>
 
-<div class="row grid" ng-if="!initalising">
+<div class="row grid" ng-if="!initalising" ng-class="{'grid-fight': isOthersFight || isMyFight}">
     <div class="col-sm-2 pull-right score">
         <h4>Playing:</h4>
         <ul>

@@ -200,7 +200,7 @@ io.on('connection', function (socket) {
 
         // emit to all that score changed
         data.cat.catInfo.score += 1;
-        data.sound = 'Meow ~~ ' + fightSounds[_.random(0, fightSounds.length - 1)] + '!';
+        data.sound = data.cat.catInfo.name + ': Meow ~~ ' + fightSounds[_.random(0, fightSounds.length - 1)] + '!';
         io.emit('score up', data);
     });
 });
