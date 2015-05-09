@@ -6,7 +6,7 @@ angular.module('app', [
         'swipe'
     ]).
     constant('SOCKET_PROTOCOL', 'ws').
-    constant('API_ADDRESS', '192.168.1.1').
+    constant('API_ADDRESS', 'localhost').
     constant('API_PORT', '3001').
     factory('mySocket', ['socketFactory', 'SOCKET_PROTOCOL', 'API_ADDRESS', 'API_PORT', function (socketFactory,
         SOCKET_PROTOCOL, API_ADDRESS, API_PORT) {
