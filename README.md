@@ -1,6 +1,6 @@
 # Cat Whoop!!!
 
-Simple Node, AngularJS and Socket.IO multi-player game
+Simple Node, AngularJS and Sockets Multi-Player Game
 
 ### Demo
 Demo can be played at: [demo link](https://cat-whoop.herokuapp.com/).
