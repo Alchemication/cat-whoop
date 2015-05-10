@@ -5,28 +5,25 @@ var express        = require('express');
 var port  	       = process.env.PORT || 3001; 				// set the port
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
-var logger         = require('morgan');
+var morgan         = require('morgan');
 var app            = require('express')();
 var http           = require('http').Server(app);
 var io             = require('socket.io')(http);
 var _              = require('underscore');
-var path           = require('path');
-//var serverIp       = require('os').networkInterfaces().en0[1].address; // on mac anyways ;)
 
-app.use(express.static(__dirname + '/public'));  // serve static (public) content
-app.use(logger('dev')); 						    // log every request to the console
+// configure app
+app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
+app.use(morgan('dev'));                                         // log every request to the console
+app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
+app.use(bodyParser.json());                                     // parse application/json
+app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+app.use(methodOverride());
 
-// http://stackoverflow.com/questions/24330014/bodyparser-is-deprecated-express-4
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-
-app.use(bodyParser.json());
-app.use(methodOverride());  // simulate DELETE and PUT
-
+// set up grid
 var gridSize = {x: 10, y: 6}; // how many boxes will grid contain
-var fightEnd = 3; // how many seconds will fight last
+var fightEnd = 3;             // how many seconds will fight last
 
+// hard coded list of available players
 var allPlayersList = [
     {"id": 1, "name": "Charlie",img: "cat1.png", free: true, score: 0},
     {"id": 2, "name": "Bettie",img: "cat2.png", free: true, score: 0},
@@ -40,6 +37,7 @@ var allPlayersList = [
     {"id": 10, "name": "Dora", img: "cat4.png", free: true, score: 0}
 ];
 
+// hard coded list of available sounds during fight
 var fightSounds = [
     "ball up",
     "bang out",
@@ -72,15 +70,18 @@ var fightSounds = [
     "tote an ass whuppin'"
 ];
 
+// generate grid cells
 var gridVertical   = _.range(gridSize.y),
     gridHorizontal = _.range(gridSize.x);
 
+// create grid json
 var gridData = {
     'size': gridSize,
     'vertical': gridVertical,
     'horizontal': gridHorizontal
 };
 
+// init playing players
 var playersPlaying = [];
 
 /**
@@ -221,8 +222,8 @@ io.on('connection', function (socket) {
 //    next();
 //});
 
-app.get('/', function(req, res) {
-    res.sendFile(path.resolve(__dirname + "/public/index.html")); // load view
+app.get('*', function(req, res) {
+    res.sendFile("./public/index.html"); // load view
 });
 
 // listen (start app with node server.js) ======================================
