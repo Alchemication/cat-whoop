@@ -8,7 +8,7 @@ Simple Node, AngularJS and Socket.IO multi-player game
   - clone this repo or download it
   - run `npm install` from api folder
   - run `bower install` from public folder
-  - run `node server.js` from api folder
+  - run `npm start` from the root of the project
   - open http://localhost:3001 in the browser
   - have fun!!!
 
