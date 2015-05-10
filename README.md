@@ -8,9 +8,8 @@ Demo can be played at: [demo link](https://cat-whoop.herokuapp.com/).
 ### Installation
   - install Node, NPM and Bower
   - clone this repo or download it
-  - run `npm install` from api folder
-  - run `bower install` from public folder
-  - run `npm start` from the root of the project
+  - run `npm install`
+  - run `npm start`
   - open http://localhost:3001 in the browser
   - have fun!!!
 
