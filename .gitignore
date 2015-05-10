@@ -9,6 +9,6 @@ lib-cov
 pids
 logs
 results
-api/npm-debug.log
-api/node_modules
+npm-debug.log
+node_modules
 public/bower_components

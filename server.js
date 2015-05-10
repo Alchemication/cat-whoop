@@ -11,9 +11,9 @@ var http           = require('http').Server(app);
 var io             = require('socket.io')(http);
 var _              = require('underscore');
 var path           = require('path');
-var serverIp       = require('os').networkInterfaces().en0[1].address; // on mac anyways ;)
+//var serverIp       = require('os').networkInterfaces().en0[1].address; // on mac anyways ;)
 
-app.use(express.static(__dirname + '/../public'));  // serve static (public) content
+app.use(express.static(__dirname + '/public'));  // serve static (public) content
 app.use(logger('dev')); 						    // log every request to the console
 
 // http://stackoverflow.com/questions/24330014/bodyparser-is-deprecated-express-4
@@ -222,7 +222,7 @@ io.on('connection', function (socket) {
 //});
 
 app.get('/', function(req, res) {
-    res.sendFile(path.resolve(__dirname + "/../public/index.html")); // load view
+    res.sendFile(path.resolve(__dirname + "/public/index.html")); // load view
 });
 
 // listen (start app with node server.js) ======================================
