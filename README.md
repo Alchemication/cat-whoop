@@ -6,7 +6,7 @@ Simple Node, AngularJS and Socket.IO multi-player game
 Demo can be played at: [demo link](https://cat-whoop.herokuapp.com/).
 
 ### Installation
-  - install Node, NPM and Bower
+  - install Node
   - clone this repo or download it
   - run `npm install`
   - run `npm start`
