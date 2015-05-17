@@ -130,7 +130,7 @@ angular.module('app', [
         var updateMyPlayerIndex = function () {
             var index = 0;
             $scope.playersPlaying.forEach(function (player) {
-                if (player.socketId === $scope.myPlayer.socketId) {
+                if (player.clientId === $scope.myPlayer.clientId) {
                     myPlayerIndex = index;
                 }
                 index++;
@@ -144,17 +144,17 @@ angular.module('app', [
          */
         var updateScore = function (data) {
 
-            var socketToUpdate = data.player.socketId,
+            var socketToUpdate = data.player.clientId,
                 newScore       = data.player.info.score;
 
             //check if our player needs to be updated
-            if (socketToUpdate === $scope.myPlayer.socketId) {
+            if (socketToUpdate === $scope.myPlayer.clientId) {
                 $scope.myPlayer.info.score = newScore;
             }
 
             // update all players
             $scope.playersPlaying.forEach(function (player) {
-                if (player.socketId === socketToUpdate) {
+                if (player.clientId === socketToUpdate) {
                     player.info.score = newScore;
                 }
             });
@@ -174,7 +174,7 @@ angular.module('app', [
          */
         var findAndUpdateMyPlayer = function (players) {
             players.forEach(function (player) {
-                if (player.socketId === $scope.myPlayer.socketId) {
+                if (player.clientId === $scope.myPlayer.clientId) {
                     $scope.myPlayer = player;
                 }
             });
@@ -225,7 +225,7 @@ angular.module('app', [
 
             // check if it's our fight and set flag accordingly
             data.players.forEach(function (player) {
-                 if (player.socketId === $scope.myPlayer.socketId) {
+                 if (player.clientId === $scope.myPlayer.clientId) {
                      isMyPlayerFighting = true;
                  }
             });

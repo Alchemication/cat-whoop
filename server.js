@@ -34,7 +34,18 @@ var allPlayersList = [
     {"id": 7, "name": "Splinter", img: "cat1.png", free: true, score: 0},
     {"id": 8, "name": "Krang", img: "cat2.png", free: true, score: 0},
     {"id": 9, "name": "Samantha", img: "cat3.png", free: true, score: 0},
-    {"id": 10, "name": "Dora", img: "cat4.png", free: true, score: 0}
+    {"id": 10, "name": "Eoife", img: "cat3.png", free: true, score: 0},
+    {"id": 11, "name": "Anne", img: "cat3.png", free: true, score: 0},
+    {"id": 12, "name": "Hunky", img: "cat3.png", free: true, score: 0},
+    {"id": 13, "name": "Hulk", img: "cat3.png", free: true, score: 0},
+    {"id": 14, "name": "Whiskers", img: "cat3.png", free: true, score: 0},
+    {"id": 15, "name": "Dolores", img: "cat3.png", free: true, score: 0},
+    {"id": 16, "name": "Bull", img: "cat3.png", free: true, score: 0},
+    {"id": 17, "name": "Seth", img: "cat3.png", free: true, score: 0},
+    {"id": 18, "name": "Kevin", img: "cat3.png", free: true, score: 0},
+    {"id": 19, "name": "Barbara", img: "cat3.png", free: true, score: 0},
+    {"id": 20, "name": "Zeta", img: "cat3.png", free: true, score: 0},
+    {"id": 21, "name": "Dora", img: "cat4.png", free: true, score: 0}
 ];
 
 // hard coded list of available sounds during fight
@@ -84,29 +95,29 @@ var gridData = {
 // init playing players
 var playersPlaying = [];
 
-/**
- * Get free player and change it's status to free:false
- * @returns {undefined}
- */
-var getFreePlayer = function () {
+var makeNewPlayer = function (clientId) {
 
-    var found = undefined;
+    // get list of free players
+    var freePlayers = _.where(allPlayersList, {free: true});
 
+    console.log(freePlayers);
+
+    // pull random player from the list
+    var randomPlayer = freePlayers[_.random(0, freePlayers.length - 1)];
+
+    console.log(randomPlayer);
+
+    // change that player's free status to false
+    var playerId = randomPlayer.id;
     allPlayersList.forEach(function (player) {
-        if (!found && player.free === true) {
+        if (player.id === playerId) {
             player.free = false;
-            found       = player;
-            return found;
         }
     });
 
-    return found;
-};
-
-var makeNewPlayer = function (socketId) {
     return {
-        "socketId": socketId,
-        info: getFreePlayer(),
+        clientId: clientId,
+        info: randomPlayer,
         position: {x: _.random(0, gridSize.x - 1), y: _.random(0, gridSize.y - 1)}
     };
 };
@@ -123,12 +134,12 @@ var emitNewPlayerList = function () {
 
 io.on('connection', function (socket) {
 
-    var socketId = socket.conn.id;
+    var clientId = socket.id;
 
-    console.log('Player connected: ' + socketId);
+    console.log('Player connected: ' + clientId);
 
     // 1. create new player if any left
-    var newPlayer = makeNewPlayer(socketId);
+    var newPlayer = makeNewPlayer(clientId);
     playersPlaying.push(newPlayer);
 
     // 2. send out an update to socket with socket id
@@ -143,19 +154,20 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
 
         // 1. get player to drop (we will need it's index)
-        var playerToDrop = _.findWhere(playersPlaying, {"socketId": socketId});
+        var playerToDrop = _.findWhere(playersPlaying, {"clientId": clientId});
 
-        console.log('Player disconnected: ' + socketId);
+        console.log('Player disconnected: ' + clientId);
 
         // 2. get rid of the player with that id from the list of playing players
         playersPlaying = _.filter(playersPlaying, function (player) {
-            return player.socketId !== socketId;
+            return player.clientId !== clientId;
         });
 
-        // 3. update free'd up player in the list of all players
+        // 3. update free'd up player in the list of all players and reset his/her score
         allPlayersList.forEach(function (player) {
             if (player.id === playerToDrop.info.id) {
-                player.free = true;
+                player.free  = true;
+                player.score = 0;
             }
         });
 
@@ -186,7 +198,7 @@ io.on('connection', function (socket) {
             }
 
             // update position of player, which needs to be updated
-            if (player.socketId === data.player.socketId) {
+            if (player.clientId === data.player.clientId) {
                 player.position = data.player.position;
             }
         });
@@ -201,7 +213,7 @@ io.on('connection', function (socket) {
         playersPlaying.forEach(function (player) {
 
             // update position of player, which needs to be updated
-            if (player.socketId === data.player.socketId) {
+            if (player.clientId === data.player.clientId) {
                 player.info.score += 1;
             }
         });
